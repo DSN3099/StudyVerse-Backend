@@ -1,23 +1,51 @@
-import app from './express';
+import express from 'express';
 import mongoose from 'mongoose';
-import config from './config/config';
+import passport from 'passport';
+import cookieSession from 'cookie-session';
+import dotenv from 'dotenv'
+import cookieParser from 'cookie-parser';
+import cors from 'cors'
+import authRoute from './Routes/auth.js'
+import courseRoute from './Routes/course.js'
 
 const app=express();
 dotenv.config();
 
-const connect=()=>{
-    mongoose.connect(process.env.MONGO_URI)
-    .then(()=>{
-        console.log('Connected to db');
-    })
-    .catch((err)=>{
-        throw err;
-    })
+const connect = async()=>{
+    try{
+        mongoose.connect(process.env.MONGO);
+        console.log("Connected to MongoDB.")
+    }
+    catch(error){
+        throw error;
+    }
 }
 
-app.use(express.json());
+mongoose.connection.on('dissconnected', ()=>{
+    console.log("MongoDB disconnected")
+})
+
+mongoose.connection.on('connected', ()=>{
+    console.log("MongoDB connected")
+})
+
+// Middleware
+app.use(cors());
+app.use(cookieSession({
+    name:'session',
+    keys:['studyVerse'],
+    maxAge:24*60*60*100
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(express.json())
 app.use(cookieParser());
-app.listen(3000,()=>{
+
+app.use('/api/auth', authRoute)
+app.use('/api/course',courseRoute)
+
+
+app.listen(5000,()=>{
     connect();
-    console.log('Server is running on port 3000');
+    console.log('Server is running on port 5000');
 })

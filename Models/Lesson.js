@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import CommentSchema from './CommentSchema.js'
 
 const LessonSchema= new mongoose.Schema({
     title:{
@@ -6,6 +7,18 @@ const LessonSchema= new mongoose.Schema({
         content:String,
         required:true
     },
+    videoUrl:{
+        type:String,
+        required:true
+    },
+    imageUrl:{
+        type:String,
+        required:true
+    },
+    summary:{
+        type:String,
+    },
+    comment:[CommentSchema.schema],
 })
 
 

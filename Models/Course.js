@@ -5,19 +5,31 @@ const courseSchema = new mongoose.Schema({
         type: String,
         trim:true,
         required: 'Name is required'
-
     },
     image:{
         data:Buffer,
-        contentType:String
+        type:String
     },
     description:{
         type:String,
         trim:true,
     },
+    reviews:[],
     category:{
         type:String,
         required:'Category is required'
+    },
+    price:{
+        type:Number,
+        required:true,
+    },
+    level:{
+        type:String,
+        required:true,
+    },
+    rating:{
+        type:Number,
+        required:true,
     },
     upadted:Date,
     created:{
@@ -32,9 +44,7 @@ const courseSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    lessons:[LessonSchema]
-
-
+    lessons:[LessonSchema.schema]
 })
 
 
