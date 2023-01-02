@@ -1,10 +1,16 @@
 import express from 'express'
-import { addCourse, getAllCourse, getCourse, updateCourse } from '../Controllers/course.js'
+import {
+  addCourse,
+  getAllCourse,
+  getCourse,
+  updateCourse,
+} from '../Controllers/course.js'
+import { verifytoken } from './VerifyToken.js'
 const router = express.Router()
 
-router.get('/',getAllCourse)
-router.get('/:id',getCourse)
-router.post('/',addCourse)
-router.post('/:id',updateCourse)
+router.get('/', getAllCourse)
+router.get('/:id', getCourse)
+router.post('/', verifytoken, addCourse)
+router.put('/:id', verifytoken, updateCourse)
 
-export default router;
+export default router
