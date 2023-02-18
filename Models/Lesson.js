@@ -13,9 +13,8 @@ const LessonSchema= new mongoose.Schema({
     },
     imageUrl:{
         type:String,
-        required:true
     },
-    summary:{
+    description:{
         type:String,
     },
     comment:[CommentSchema.schema],
