@@ -42,7 +42,7 @@ const courseSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    lessons:[LessonSchema.schema]
+    lessons:[]
 })
 
 
