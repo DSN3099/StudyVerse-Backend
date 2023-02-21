@@ -2,6 +2,9 @@ import mongoose from 'mongoose'
 import CommentSchema from './CommentSchema.js'
 
 const LessonSchema= new mongoose.Schema({
+    courseId:{
+        type: mongoose.Schema.ObjectId,
+    },
     title:{
         type:String,
         content:String,

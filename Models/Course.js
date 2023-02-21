@@ -7,7 +7,6 @@ const courseSchema = new mongoose.Schema({
         required: 'Name is required'
     },
     image:{
-        data:Buffer,
         type:String
     },
     description:{
