@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.get('/', getAllCourse)
 router.get('/:id', getCourse)
-router.post('/', verifytoken, addCourse)
+router.post('/',verifytoken, addCourse)
 router.put('/:id', verifytoken, updateCourse)
 
 export default router

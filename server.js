@@ -39,7 +39,8 @@ app.use(cookieSession({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(express.json({limit:'100mb',extended:true}))
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 app.use(cookieParser());
 
 app.use('/api/auth', authRoute)

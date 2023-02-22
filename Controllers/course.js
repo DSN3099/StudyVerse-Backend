@@ -26,7 +26,7 @@ export const addCourse = async (req, res) => {
   })
   try {
     await newCourse.save()
-    res.status(200).send('Course created successfully...')
+    res.status(200).json(newCourse)
   } catch (err) {
     res.status(400).json({ message: err })
   }
