@@ -14,12 +14,12 @@ export const addVideos = async (req, res) => {
 
 export const editVideo = async (req, res) => {
     const {id} = req.params
-    const {id:videoId,name} = req.body
+    const {id:videoId,videoname} = req.body
     try{
-        console.log(name)
+        // console.log(name)
         const course = await Course.updateOne({_id:id,"lessons.id":videoId},
             {
-                $set : {"lessons.$.name":name}
+                $set : {"lessons.$.name":videoname}
             }
         )
         res.status(201).json(course)
@@ -33,6 +33,7 @@ export const editVideo = async (req, res) => {
 export const deleteVideo = async (req, res) => {
     const { id } = req.params
     const {id:videoId} = req.body
+    console.log(videoId);
     try{
         const course = await Course.findByIdAndUpdate(id,{$pull : {lessons : {id:videoId}}},{upsert:false,new:true})
         res.status(201).json(course)
