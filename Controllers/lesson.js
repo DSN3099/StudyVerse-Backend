@@ -14,12 +14,12 @@ export const addVideos = async (req, res) => {
 
 export const editVideo = async (req, res) => {
     const {id} = req.params
-    const {id:videoId,name} = req.body
+    const {id:videoId,videoname} = req.body
     try{
-        console.log(name)
+        // console.log(name)
         const course = await Course.updateOne({_id:id,"lessons.id":videoId},
             {
-                $set : {"lessons.$.name":name}
+                $set : {"lessons.$.name":videoname}
             }
         )
         res.status(201).json(course)
