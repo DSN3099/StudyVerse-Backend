@@ -5,7 +5,7 @@ import {
 const router = express.Router()
 
 router.post('/:id',addVideos)
-router.delete('/:id',deleteVideo)
+router.delete('/:id/:videoId',deleteVideo)
 router.patch('/:id',editVideo)
 
 export default router;
