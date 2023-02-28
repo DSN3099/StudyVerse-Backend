@@ -31,9 +31,7 @@ export const editVideo = async (req, res) => {
 }
 
 export const deleteVideo = async (req, res) => {
-    const { id } = req.params
-    const {id:videoId} = req.body
-    console.log(videoId);
+    const { id ,videoId} = req.params
     try{
         const course = await Course.findByIdAndUpdate(id,{$pull : {lessons : {id:videoId}}},{upsert:false,new:true})
         res.status(201).json(course)
