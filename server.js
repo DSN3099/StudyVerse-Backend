@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors'
 import authRoute from './Routes/auth.js'
 import courseRoute from './Routes/course.js'
+import lessonRoute from './Routes/lesson.js'
 
 const app=express();
 dotenv.config();
@@ -39,10 +40,12 @@ app.use(cookieSession({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 app.use(cookieParser());
 
 app.use('/api/auth', authRoute)
 app.use('/api/course',courseRoute)
+app.use('/api/video',lessonRoute)
 
 
 app.listen(5000,()=>{

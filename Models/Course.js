@@ -7,7 +7,6 @@ const courseSchema = new mongoose.Schema({
         required: 'Name is required'
     },
     image:{
-        data:Buffer,
         type:String
     },
     description:{
@@ -42,7 +41,7 @@ const courseSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    lessons:[LessonSchema.schema]
+    lessons:[]
 })
 
 
