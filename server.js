@@ -30,8 +30,14 @@ mongoose.connection.on('connected', ()=>{
     console.log("MongoDB connected")
 })
 
+const corsOption = {
+    origin:true,
+    credentials: true
+}
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOption));
+app.use(cookieParser());
 app.use(cookieSession({
     name:'session',
     keys:['studyVerse'],
@@ -41,7 +47,6 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-app.use(cookieParser());
 
 app.use('/api/auth', authRoute)
 app.use('/api/course',courseRoute)

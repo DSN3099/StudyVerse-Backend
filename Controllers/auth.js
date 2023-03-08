@@ -18,24 +18,23 @@ export const login = async (req, res, next) => {
 
     const { password, ...otherDetail } = user._doc
     res
-      .cookie('access_token', token, {
-        httpOnly: true,
-      })
+      .cookie('access_token', token)
       .status(200)
-      .json({ ...otherDetail })
+      .json({ ...otherDetail,token })
   } catch (error) {
     res.status(error.status || 500).send(error.message)
   }
 }
 export const glogin = async (req, res, next) => {}
+
 export const register = async (req, res, next) => {
   try {
     const salt = bcrypt.genSaltSync(10)
     const hash = bcrypt.hashSync(req.body.password, salt)
 
     const newUser = new Users({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
+      firstname: req.body.fname,
+      lastname: req.body.lname,
       email: req.body.email,
       password: hash,
     })
@@ -44,4 +43,10 @@ export const register = async (req, res, next) => {
   } catch (error) {
     res.status(error.status || 500).send(error.message)
   }
+}
+
+export const logout = (req,res,next) =>{
+    console.log("requested logout")
+    res.clearCookie('access_token')
+    res.status(201).json({message:'Logout Successfull'})
 }
