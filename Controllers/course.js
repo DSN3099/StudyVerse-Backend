@@ -4,8 +4,10 @@ export const getAllCourse = async (req, res) => {
   try {
     const getAllCourse = await Course.find()
     res.status(200).json(getAllCourse)
+    return 
   } catch (err) {
-    res.status(500).json({ message: err })
+    res.status(500).json(err)
+    return 
   }
 }
 
@@ -14,8 +16,10 @@ export const getCourse = async (req, res) => {
     const getCourse = await Course.findById(req.params.id)
     if (!getCourse) res.status(404).send('Course not found...')
     res.status(200).json(getCourse)
+    return 
   } catch (err) {
-    res.status(500).json({ message: err })
+    res.status(500).json(err)
+    return 
   }
 }
 
@@ -27,8 +31,10 @@ export const addCourse = async (req, res) => {
   try {
     await newCourse.save()
     res.status(200).json(newCourse)
+    return 
   } catch (err) {
-    res.status(400).json({ message: err })
+    res.status(400).json(err)
+    return 
   }
 }
 
@@ -45,8 +51,10 @@ export const updateCourse = async (req, res) => {
         { new: true },
       )
       res.status(200).json(updatedCourse)
+      return 
     }
   } catch (err) {
-    res.status(500).json({ message: err })
+    res.status(500).json(err)
+    return 
   }
 }
