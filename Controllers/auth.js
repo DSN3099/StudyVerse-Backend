@@ -14,34 +14,45 @@ export const login = async (req, res, next) => {
     if (!isCorrectPass)
       return res.status(400).json('Incorrect password or email')
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT)
+    const token = jwt.sign({ id: user._id }, process.env.JWT,{expiresIn:'1d'})
 
     const { password, ...otherDetail } = user._doc
     res
-      .cookie('access_token', token, {
-        httpOnly: true,
-      })
+      .cookie('access_token', token)
       .status(200)
-      .json({ ...otherDetail })
+      .json({ ...otherDetail,token })
+
+    return 
   } catch (error) {
     res.status(error.status || 500).send(error.message)
+    return 
   }
 }
 export const glogin = async (req, res, next) => {}
+
 export const register = async (req, res, next) => {
   try {
     const salt = bcrypt.genSaltSync(10)
     const hash = bcrypt.hashSync(req.body.password, salt)
 
     const newUser = new Users({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
+      firstname: req.body.fname,
+      lastname: req.body.lname,
       email: req.body.email,
       password: hash,
     })
     await newUser.save()
     res.status(200).send('User created successfully')
+    return
   } catch (error) {
     res.status(error.status || 500).send(error.message)
+    return 
   }
+}
+
+export const logout = (req,res,next) =>{
+    console.log("requested logout")
+    res.clearCookie('access_token')
+    res.status(201).json({message:'Logout Successfull'})
+    return
 }
