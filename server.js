@@ -8,6 +8,7 @@ import cors from 'cors'
 import authRoute from './Routes/auth.js'
 import courseRoute from './Routes/course.js'
 import lessonRoute from './Routes/lesson.js'
+import userRoute from './Routes/user.js'
 import reviewRoute from './Routes/Reviews.js'
 
 const app=express();
@@ -52,6 +53,7 @@ app.use(express.urlencoded({extended:true}))
 app.use('/api/auth', authRoute)
 app.use('/api/course',courseRoute)
 app.use('/api/video',lessonRoute)
+app.use('/api/user',userRoute)
 app.use('/api/review',reviewRoute)
 
 

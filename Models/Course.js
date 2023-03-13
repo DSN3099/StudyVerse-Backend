@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import LessonSchema from './Lesson.js';
 const courseSchema = new mongoose.Schema({
     title: {
         type: String,
