@@ -1,4 +1,4 @@
-import Reviews from '../Models/Reviews'
+import Reviews from '../Models/Reviews.js'
 
 export const getAllReviews = async (req, res) => {
   try {
@@ -29,6 +29,64 @@ export const addReview = async (req, res) => {
     res.status(200).json(newReview)
   } catch (err) {
     res.status(400).json({ message: err })
+  }
+}
+
+export const addLikes = async (req, res) => {
+  const review = await Reviews.findById(req.params.id)
+
+  if (!review) res.status(404).send('Review not found...')
+  if (!review.likes.includes(req.body.userId)) {
+    // await review.updateOne(
+    //   { $push: { likes: req.body.userId } },
+    //   {
+    //     $set: { isLiked: true },
+    //   },
+    // )
+    review.likes.push(req.body.userId)
+    review.isLiked = true
+    review.dislikes.pull(req.body.userId)
+    review.isDisliked = false
+
+    await review.save()
+
+    res.status(200).json(review)
+  } else {
+    review.likes.pull(req.body.userId)
+    review.isLiked = false
+    await review.save()
+
+    res.status(200).json(review)
+  }
+}
+export const addDislikes = async (req, res) => {
+  const review = await Reviews.findById(req.params.id)
+  if (!review) res.status(404).send('Review not found...')
+  if (!review.dislikes.includes(req.body.userId)) {
+    // await review.updateMany(
+    //   { $push: { dislikes: req.body.userId } },
+
+    //   {
+    //     $set: { isDisliked: true },
+    //   },
+    // )
+    review.dislikes.push(req.body.userId)
+    review.isDisliked = true
+    review.likes.pull(req.body.userId)
+    review.isLiked = false
+    await review.save()
+    res.status(200).json(review)
+  } else {
+    // await review.updateMany(
+    //   { $pull: { dislikes: req.body.userId } },
+    //   {
+    //     $set: { isDisliked: false },
+    //   },
+    // )
+    review.dislikes.pull(req.body.userId)
+    review.isDisliked = false
+    await review.save()
+    res.status(200).json(review)
   }
 }
 

@@ -14,6 +14,28 @@ const reviewSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.ObjectId,
   },
+  totalReviews: {
+    type: Number,
+  },
+  likes: [
+    {
+      type: mongoose.Schema.ObjectId,
+    },
+  ],
+  dislikes: [
+    {
+      type: mongoose.Schema.ObjectId,
+    },
+  ],
+  isLiked: {
+    type: Boolean,
+    default: false,
+  },
+  isDisliked: {
+    type: Boolean,
+    default: false,
+  },
+
   profilePic: {
     type: String,
   },
