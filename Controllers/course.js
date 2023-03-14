@@ -2,7 +2,7 @@ import Course from '../Models/Course.js'
 
 export const getAllCourse = async (req, res) => {
   try {
-    const getAllCourse = await Course.find()
+    const getAllCourse = await Course.find().populate('reviews').populate('authorData','_id firstname lastname')
     res.status(200).json(getAllCourse)
     return 
   } catch (err) {
@@ -13,7 +13,7 @@ export const getAllCourse = async (req, res) => {
 
 export const getCourse = async (req, res) => {
   try {
-    const getCourse = await Course.findById(req.params.id)
+    const getCourse = await Course.findById(req.params.id).populate('reviews')
     if (!getCourse) res.status(404).send('Course not found...')
     res.status(200).json(getCourse)
     return 
@@ -26,6 +26,7 @@ export const getCourse = async (req, res) => {
 export const addCourse = async (req, res) => {
   const newCourse = new Course({
     title: req.body.title,
+    authorData:req.user.id,
     ...req.body,
   })
   try {

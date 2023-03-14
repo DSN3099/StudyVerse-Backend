@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 const courseSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -12,7 +12,10 @@ const courseSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
-    reviews: [],
+    reviews: [{
+        type:Schema.Types.ObjectId,
+        ref:'Review'
+    }],
     category: {
         type: String,
         required: 'Category is required'
@@ -32,11 +35,9 @@ const courseSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    authorId: {
+    authorData: {
         type: mongoose.Schema.ObjectId,
-    },
-    authorName: {
-        type: String,
+        ref:'Users'
     },
     published: {
         type: Boolean,
