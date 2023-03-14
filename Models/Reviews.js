@@ -8,10 +8,7 @@ const reviewSchema = new mongoose.Schema({
     type: Number,
     required: 'Rating is required',
   },
-  userId: {
-    type: mongoose.Schema.ObjectId,
-    ref:'Users'
-  },
+  userData: [],
   totalReviews: {
     type: Number,
   },
@@ -33,6 +30,9 @@ const reviewSchema = new mongoose.Schema({
   created: {
     type: Date,
     default: Date.now,
+  },
+  report:{
+    type:String
   },
   updated: Date,
 })

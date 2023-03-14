@@ -3,6 +3,6 @@ import { getUserData } from '../Controllers/user.js';
 import { verifytoken } from './VerifyToken.js'
 const router = express.Router()
 
-router.get('/:token',verifytoken,getUserData)
+router.get('/',verifytoken,getUserData)
 
 export default router;
