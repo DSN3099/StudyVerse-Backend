@@ -67,31 +67,53 @@ export const verifyEmail = async (req, res, next) => {
   if (!user) return res.status(402).json('User not found!!')
   else {
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
-    const userotp = new UserOtp({
-      OTP : otp,
-      userId : user[0]._id,
-      expireAt : Date.now() + 600000
-    })
-    userotp.save()
-    console.log(userotp)
-    try {
-      const res = await emailjs.send("service_ancctvq", "template_nwn0yfw", {
-        email: user[0].email,
-        OTP: otp,
-      }, { publicKey: process.env.PUBLIC_KEY, privateKey: process.env.PRIVATE_KEY });
-      return res.status(200).json({ message: 'Email sent successfully', otp: otp, id: user[0]._id })
+    const userOtp = await UserOtp.find({userId:user[0]._id})
+    if(userOtp){
+      const userotp = new UserOtp({
+        OTP : otp,
+        userId : user[0]._id,
+        createdAt:Date.now(),
+        expireAt : Date.now() + 600000
+      })
+      userotp.save()
+      try {
+        await emailjs.send("service_ancctvq", "template_nwn0yfw", {
+          email: user[0].email,
+          OTP: otp,
+        }, { publicKey: process.env.PUBLIC_KEY, privateKey: process.env.PRIVATE_KEY });
+        return res.status(200).json({ message: 'Email sent successfully', otpId:userotp._id})
+      }
+      catch (err) {
+        return res.status(200).json(err)
+      }
     }
-    catch (err) {
-      return res.status(200).json(err)
+    else{
+      userOtp[0].createdAt = Date.now()
+      userOtp[0].expireAt = Date.now() + 600000
+      userOtp[0].OTP = otp
+      userOtp[0].save()
+      try {
+        await emailjs.send("service_ancctvq", "template_nwn0yfw", {
+          email: user[0].email,
+          OTP: otp,
+        }, { publicKey: process.env.PUBLIC_KEY, privateKey: process.env.PRIVATE_KEY });
+        return res.status(200).json({ message: 'Email sent successfully', otpId:userOtp[0]._id})
+      }
+      catch (err) {
+        return res.status(200).json(err)
+      }
     }
   }
 }
 
 export const verifyOtp = async (req,res,next) =>{
-  const {otp,userId} = req.body
-  const userOtp = UserOtp.find({userId:userId})
-  if(!userOtp) return res.status(400).json('Timeout')
-  if(userOtp.OTP === otp) return res.redirect(`localhost:3000/Changepassword/${userOtp.userId}`)
+  const {otpId,otp} = req.body
+  const userOtp = await UserOtp.findById(otpId)
+  if(Date.now()>userOtp.expireAt){
+    userOtp.remove()
+    return res.status(419).json('Timeout')
+  }
+  if(otp === userOtp.OTP) return res.redirect(`localhost:3000/Changepassword/${userOtp.userId}`)
   else return res.status(400).json('Invalid OTP')
 }
 
