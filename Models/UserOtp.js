@@ -10,8 +10,7 @@ const UserOtp = new Schema(({
         type : String
     },
     createdAt : {
-        type :Date,
-        default : Date.now
+        type :Date
     },
     expireAt : {
         type: Date
