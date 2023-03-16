@@ -64,11 +64,12 @@ export const logout = (req, res, next) => {
 export const verifyEmail = async (req, res, next) => {
   const { email } = req.body
   const user = await Users.find({ email: email })
-  if (!user) return res.status(402).json('User not found!!')
+  if (!user[0]) return res.status(400).json('User not found!!')
   else {
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
     const userOtp = await UserOtp.find({userId:user[0]._id})
-    if(userOtp){
+    console.log(userOtp)
+    if(!userOtp[0]){
       const userotp = new UserOtp({
         OTP : otp,
         userId : user[0]._id,
@@ -109,11 +110,12 @@ export const verifyEmail = async (req, res, next) => {
 export const verifyOtp = async (req,res,next) =>{
   const {otpId,otp} = req.body
   const userOtp = await UserOtp.findById(otpId)
+  console.log(userOtp)
   if(Date.now()>userOtp.expireAt){
     userOtp.remove()
     return res.status(419).json('Timeout')
   }
-  if(otp === userOtp.OTP) return res.redirect(`localhost:3000/Changepassword/${userOtp.userId}`)
+  if(otp === userOtp.OTP) return res.status(200).json({message:"OTP verified",userId:userOtp.userId})
   else return res.status(400).json('Invalid OTP')
 }
 
