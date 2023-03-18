@@ -8,40 +8,31 @@ const reviewSchema = new mongoose.Schema({
     type: Number,
     required: 'Rating is required',
   },
-  course: {
-    type: mongoose.Schema.ObjectId,
-  },
-  userId: {
-    type: mongoose.Schema.ObjectId,
-  },
+  userData: [],
   totalReviews: {
     type: Number,
   },
   likes: [
     {
       type: mongoose.Schema.ObjectId,
+      ref:'Users'
     },
   ],
   dislikes: [
     {
       type: mongoose.Schema.ObjectId,
+      ref:"Users"
     },
   ],
-  isLiked: {
-    type: Boolean,
-    default: false,
-  },
-  isDisliked: {
-    type: Boolean,
-    default: false,
-  },
-
   profilePic: {
     type: String,
   },
   created: {
     type: Date,
     default: Date.now,
+  },
+  report:{
+    type:String
   },
   updated: Date,
 })
