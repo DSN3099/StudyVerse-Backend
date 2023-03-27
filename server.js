@@ -38,10 +38,6 @@ const corsOption = {
 }
 
 // Middleware
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
 app.use(cors(corsOption));
 app.use(cookieParser());
 app.use(cookieSession({
