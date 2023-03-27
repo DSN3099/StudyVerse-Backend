@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import nodemailer from 'nodemailer'
 import Users from '../Models/Users.js'
 import UserOtp from '../Models/UserOtp.js'
 import emailjs from '@emailjs/nodejs';
@@ -108,12 +107,12 @@ export const verifyEmail = async (req, res, next) => {
 
 export const verifyOtp = async (req,res,next) =>{
   const {otpId,otp} = req.body
-  const userOtp = await UserOtp.findById(otpId)
+  const userOtp = await UserOtp.findById(otpId) 
   if(Date.now()>userOtp.expireAt){
     userOtp.remove()
     return res.status(419).json('Timeout')
   }
-  if(otp === userOtp.OTP) return res.redirect(`localhost:3000/Changepassword/${userOtp.userId}`)
+  if(otp === userOtp.OTP) return  
   else return res.status(400).json('Invalid OTP')
 }
 

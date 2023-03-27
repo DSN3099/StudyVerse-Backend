@@ -11,6 +11,7 @@ const reviewSchema = new mongoose.Schema({
   userData: [],
   totalReviews: {
     type: Number,
+    default : 0
   },
   likes: [
     {
