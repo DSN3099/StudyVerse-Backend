@@ -63,11 +63,12 @@ export const logout = (req, res, next) => {
 export const verifyEmail = async (req, res, next) => {
   const { email } = req.body
   const user = await Users.find({ email: email })
-  if (!user) return res.status(402).json('User not found!!')
+  if (!user[0]) return res.status(400).json('User not found!!')
   else {
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
     const userOtp = await UserOtp.find({userId:user[0]._id})
-    if(userOtp){
+    console.log(userOtp)
+    if(!userOtp[0]){
       const userotp = new UserOtp({
         OTP : otp,
         userId : user[0]._id,
