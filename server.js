@@ -33,7 +33,7 @@ mongoose.connection.on('connected', () => {
 })
 
 const corsOption = {
-    origin: 'https://studyverse-sk01.onrender.com',
+    // origin: 'https://studyverse.netlify.app',
     credentials: true
 }
 
