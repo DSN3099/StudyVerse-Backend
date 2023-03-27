@@ -21,7 +21,7 @@ export const login = async (req, res, next) => {
 
     const { password, ...otherDetail } = user._doc
     res
-      .cookie('access_token', token,{secure: true})
+      .cookie('access_token', token)
       .status(200)
       .json({ ...otherDetail, token })
 
