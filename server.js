@@ -11,29 +11,29 @@ import lessonRoute from './Routes/lesson.js'
 import userRoute from './Routes/user.js'
 import reviewRoute from './Routes/Reviews.js'
 
-const app=express();
+const app = express();
 dotenv.config();
 
-const connect = async()=>{
-    try{
+const connect = async () => {
+    try {
         mongoose.connect(process.env.MONGO);
         console.log("Connected to MongoDB.")
     }
-    catch(error){
+    catch (error) {
         throw error;
     }
 }
 
-mongoose.connection.on('dissconnected', ()=>{
+mongoose.connection.on('dissconnected', () => {
     console.log("MongoDB disconnected")
 })
 
-mongoose.connection.on('connected', ()=>{
+mongoose.connection.on('connected', () => {
     console.log("MongoDB connected")
 })
 
 const corsOption = {
-    origin:'http://localhost:3000',
+    origin: 'https://studyverse.netlify.app',
     credentials: true
 }
 
@@ -41,23 +41,23 @@ const corsOption = {
 app.use(cors(corsOption));
 app.use(cookieParser());
 app.use(cookieSession({
-    name:'session',
-    keys:['studyVerse'],
-    maxAge:24*60*60*100
+    name: 'session',
+    keys: ['studyVerse'],
+    maxAge: 24 * 60 * 60 * 100
 }))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/auth', authRoute)
-app.use('/api/course',courseRoute)
-app.use('/api/video',lessonRoute)
-app.use('/api/user',userRoute)
-app.use('/api/review',reviewRoute)
+app.use('/api/course', courseRoute)
+app.use('/api/video', lessonRoute)
+app.use('/api/user', userRoute)
+app.use('/api/review', reviewRoute)
 
 
-app.listen(5000,()=>{
+app.listen(5000, () => {
     connect();
     console.log('Server is running on port 5000');
 })
