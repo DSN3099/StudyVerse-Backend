@@ -24,8 +24,8 @@ export const addReview = async (req, res) => {
     })
     newReview.totalReviews = newReview.totalReviews + 1
     const course = await Course.findById(id)
-    const rating = await Rating.findById(course.rating)
-    if(newReview.rating === 1){
+    const rating = await Rating.findById(course.rating._id)
+    if(newReview.rating === 1){ 
       rating.star1 = rating.star1 + 1
     }else if(newReview.rating === 2){
       rating.star2 = rating.star2 + 1
@@ -42,7 +42,7 @@ export const addReview = async (req, res) => {
     await course.save()
     res.status(200).json(newReview)
   } catch (err) {
-    res.status(500).json({ message: err })
+    res.status(500).json(err)
   }
 }
 

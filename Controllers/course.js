@@ -14,7 +14,7 @@ export const getAllCourse = async (req, res) => {
 
 export const getCourse = async (req, res) => {
   try {
-    const getCourse = await Course.findById(req.params.id).populate('reviews').populate('rating')
+    const getCourse = await Course.findById(req.params.id).populate('reviews').populate('rating').populate('authorData')
     if (!getCourse) res.status(404).send('Course not found...')
     res.status(200).json(getCourse)
     return 
