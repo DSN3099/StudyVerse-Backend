@@ -1,48 +1,51 @@
-import mongoose from "mongoose";
-import LessonSchema from './Lesson.js';
+import mongoose, { Schema } from "mongoose";
 const courseSchema = new mongoose.Schema({
     title: {
         type: String,
-        trim:true,
+        trim: true,
         required: 'Name is required'
     },
-    image:{
-        type:String
+    image: {
+        type: String
     },
-    description:{
-        type:String,
-        trim:true,
+    description: {
+        type: String,
+        trim: true,
     },
-    reviews:[],
-    category:{
-        type:String,
-        required:'Category is required'
+    reviews: [{
+        type:Schema.Types.ObjectId,
+        ref:'Review'
+    }],
+    category: {
+        type: String,
+        required: 'Category is required'
     },
-    price:{
-        type:Number,
-        required:true,
+    price: {
+        type: Number,
+        required: true,
     },
-    level:{
-        type:String,
+    level: {
+        type: String,
     },
-    rating:{
-        type:Number,
+    rating: {
+        type: Schema.Types.ObjectId,
+        ref:'Ratings'
     },
-    upadted:Date,
-    created:{
-        type:Date,
-        default:Date.now
+    upadted: Date,
+    created: {
+        type: Date,
+        default: Date.now
     },
-    instructor:{
-        type:mongoose.Schema.ObjectId,
-        ref:'User'
+    authorData: {
+        type: Schema.Types.ObjectId,
+        ref:'Users'
     },
-    published:{
-        type:Boolean,
-        default:false
+    published: {
+        type: Boolean,
+        default: false
     },
-    lessons:[]
+    lessons: []
 })
 
 
-export default mongoose.model('Course',courseSchema)
+export default mongoose.model('Course', courseSchema)
