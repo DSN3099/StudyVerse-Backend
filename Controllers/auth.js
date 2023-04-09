@@ -21,10 +21,10 @@ export const login = async (req, res, next) => {
 
     const { password, ...otherDetail } = user._doc
     res
-      .cookie('access_token', token,{
+      .cookie('access_token', token, {
         secure: true,
         httpOnly: true,
-        sameSite : "None"
+        sameSite: "None"
       })
       .status(200)
       .json({ ...otherDetail, token })
@@ -35,7 +35,26 @@ export const login = async (req, res, next) => {
     return
   }
 }
-export const glogin = async (req, res, next) => { }
+export const glogin = async (req, res, next) => {
+  const {token} = req.body;
+  try {
+    const { email } = jwt_decode(token)
+    const user = await Users.findOne({ email: email })
+    if (!user) return res.status(403).json('Please create an account first.')
+    const newtoken = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: '1d' })
+    res
+      .cookie('access_token', newtoken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: "None"
+      })
+      .status(200)
+      .json({ newtoken, message: 'SignIn successfull.' })
+    return
+  } catch (err) {
+    return res.status(500).json(err)
+  }
+}
 
 export const register = async (req, res, next) => {
   try {
@@ -58,7 +77,6 @@ export const register = async (req, res, next) => {
 }
 
 export const logout = (req, res, next) => {
-  console.log("requested logout")
   res.clearCookie('access_token')
   res.status(201).json({ message: 'Logout Successfull' })
   return
@@ -70,14 +88,13 @@ export const verifyEmail = async (req, res, next) => {
   if (!user[0]) return res.status(400).json('User not found!!')
   else {
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
-    const userOtp = await UserOtp.find({userId:user[0]._id})
-    console.log(userOtp)
-    if(!userOtp[0]){
+    const userOtp = await UserOtp.find({ userId: user[0]._id })
+    if (!userOtp[0]) {
       const userotp = new UserOtp({
-        OTP : otp,
-        userId : user[0]._id,
-        createdAt:Date.now(),
-        expireAt : Date.now() + 600000
+        OTP: otp,
+        userId: user[0]._id,
+        createdAt: Date.now(),
+        expireAt: Date.now() + 600000
       })
       userotp.save()
       try {
@@ -85,13 +102,13 @@ export const verifyEmail = async (req, res, next) => {
           email: user[0].email,
           OTP: otp,
         }, { publicKey: process.env.PUBLIC_KEY, privateKey: process.env.PRIVATE_KEY });
-        return res.status(200).json({ message: 'Email sent successfully', otpId:userotp._id})
+        return res.status(200).json({ message: 'Email sent successfully', otpId: userotp._id })
       }
       catch (err) {
         return res.status(200).json(err)
       }
     }
-    else{
+    else {
       userOtp[0].createdAt = Date.now()
       userOtp[0].expireAt = Date.now() + 600000
       userOtp[0].OTP = otp
@@ -101,7 +118,7 @@ export const verifyEmail = async (req, res, next) => {
           email: user[0].email,
           OTP: otp,
         }, { publicKey: process.env.PUBLIC_KEY, privateKey: process.env.PRIVATE_KEY });
-        return res.status(200).json({ message: 'Email sent successfully', otpId:userOtp[0]._id})
+        return res.status(200).json({ message: 'Email sent successfully', otpId: userOtp[0]._id })
       }
       catch (err) {
         return res.status(200).json(err)
@@ -110,14 +127,14 @@ export const verifyEmail = async (req, res, next) => {
   }
 }
 
-export const verifyOtp = async (req,res,next) =>{
-  const {otpId,otp} = req.body
-  const userOtp = await UserOtp.findById(otpId) 
-  if(Date.now()>userOtp.expireAt){
+export const verifyOtp = async (req, res, next) => {
+  const { otpId, otp } = req.body
+  const userOtp = await UserOtp.findById(otpId)
+  if (Date.now() > userOtp.expireAt) {
     userOtp.remove()
     return res.status(419).json('Timeout')
   }
-  if(otp === userOtp.OTP) return  
+  if (otp === userOtp.OTP) return res.status(200).json('verified')
   else return res.status(400).json('Invalid OTP')
 }
 
@@ -130,6 +147,27 @@ export const changePassword = async (req, res, next) => {
       $set: { password: newPass }
     }, { new: true })
     return res.status(200).json('Password updated successfully.')
+  } catch (err) {
+    res.status(400).json(err)
+  }
+}
+
+export const changeCurrentPassword = async (req, res, next) => {
+  const { id } = req.user
+  const { newPass, currentPass } = req.body
+  try {
+    const user = await Users.findById(id)
+    const isCorrectPass = await bcrypt.compare(currentPass, user.password)
+    if (isCorrectPass) {
+      const salt = bcrypt.genSaltSync(10)
+      const newPassHash = bcrypt.hashSync(newPass, salt)
+      user.password = newPassHash
+      user.save()
+      return res.status(200).json('Password updated successfully.')
+    }
+    else {
+      return res.status(400).json('Current password is incorrect.')
+    }
   } catch (err) {
     res.status(400).json(err)
   }
