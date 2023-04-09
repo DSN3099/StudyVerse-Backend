@@ -1,6 +1,5 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import passport from 'passport';
 import cookieSession from 'cookie-session';
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser';
@@ -23,6 +22,7 @@ const connect = async () => {
     }
 }
 
+
 mongoose.connection.on('dissconnected', () => {
     console.log("MongoDB disconnected")
 })
@@ -42,10 +42,9 @@ app.use(cookieParser());
 app.use(cookieSession({
     name: 'session',
     keys: ['studyVerse'],
-    maxAge: 24 * 60 * 60 * 100
+    maxAge: 24 * 60 * 60 * 100,
+    
 }))
-app.use(passport.initialize())
-app.use(passport.session())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

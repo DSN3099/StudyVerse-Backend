@@ -35,24 +35,35 @@ export const login = async (req, res, next) => {
     return
   }
 }
-export const glogin = async (req, res, next) => {
-  const {token} = req.body;
+
+export const recoverAccount = async (req, res, next) => {
   try {
-    const { email } = jwt_decode(token)
-    const user = await Users.findOne({ email: email })
-    if (!user) return res.status(403).json('Please create an account first.')
-    const newtoken = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: '1d' })
-    res
-      .cookie('access_token', newtoken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: "None"
-      })
-      .status(200)
-      .json({ newtoken, message: 'SignIn successfull.' })
-    return
-  } catch (err) {
-    return res.status(500).json(err)
+    const user = await Users.findOne({ email: req.body.email })
+    if (user.isDeactivated) {
+      if (user.deactivatedAt + 172800000 > Date.now) {
+        const isCorrectPass = await bcrypt.compare(req.body.password, user.password)
+        if (!isCorrectPass)
+          return res.status(400).json('Incorrect password or email')
+        const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: '1d' })
+        const { password, ...otherDetail } = user._doc
+        res
+          .cookie('access_token', token, {
+            secure: true,
+            httpOnly: true,
+            sameSite: "None"
+          })
+          .status(200)
+          .json({ ...otherDetail, token })
+      }
+      else {
+        return res.status(400).status('Time exceeded more than two days.')
+      }
+    }
+    else {
+      return res.status(400).status('Your account is active, please login.')
+    }
+  } catch (error) {
+    return res.status(500).json(error)
   }
 }
 
@@ -89,6 +100,7 @@ export const verifyEmail = async (req, res, next) => {
   else {
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
     const userOtp = await UserOtp.find({ userId: user[0]._id })
+    console.log(userOtp)
     if (!userOtp[0]) {
       const userotp = new UserOtp({
         OTP: otp,
@@ -130,11 +142,12 @@ export const verifyEmail = async (req, res, next) => {
 export const verifyOtp = async (req, res, next) => {
   const { otpId, otp } = req.body
   const userOtp = await UserOtp.findById(otpId)
+  console.log(userOtp, 'got it');
   if (Date.now() > userOtp.expireAt) {
     userOtp.remove()
     return res.status(419).json('Timeout')
   }
-  if (otp === userOtp.OTP) return res.status(200).json('verified')
+  if (otp === userOtp.OTP) return res.status(200).json({ message: 'verified', userId: userOtp.userId })
   else return res.status(400).json('Invalid OTP')
 }
 
