@@ -21,10 +21,10 @@ export const login = async (req, res, next) => {
 
     const { password, ...otherDetail } = user._doc
     res
-      .cookie('access_token', token,{
+      .cookie('access_token', token, {
         secure: true,
         httpOnly: true,
-        sameSite : "None"
+        sameSite: "None"
       })
       .status(200)
       .json({ ...otherDetail, token })
@@ -35,7 +35,37 @@ export const login = async (req, res, next) => {
     return
   }
 }
-export const glogin = async (req, res, next) => { }
+
+export const recoverAccount = async (req, res, next) => {
+  try {
+    const user = await Users.findOne({ email: req.body.email })
+    if (user.isDeactivated) {
+      if (user.deactivatedAt + 172800000 > Date.now) {
+        const isCorrectPass = await bcrypt.compare(req.body.password, user.password)
+        if (!isCorrectPass)
+          return res.status(400).json('Incorrect password or email')
+        const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: '1d' })
+        const { password, ...otherDetail } = user._doc
+        res
+          .cookie('access_token', token, {
+            secure: true,
+            httpOnly: true,
+            sameSite: "None"
+          })
+          .status(200)
+          .json({ ...otherDetail, token })
+      }
+      else {
+        return res.status(400).status('Time exceeded more than two days.')
+      }
+    }
+    else {
+      return res.status(400).status('Your account is active, please login.')
+    }
+  } catch (error) {
+    return res.status(500).json(error)
+  }
+}
 
 export const register = async (req, res, next) => {
   try {
@@ -70,14 +100,14 @@ export const verifyEmail = async (req, res, next) => {
   if (!user[0]) return res.status(400).json('User not found!!')
   else {
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
-    const userOtp = await UserOtp.find({userId:user[0]._id})
+    const userOtp = await UserOtp.find({ userId: user[0]._id })
     console.log(userOtp)
-    if(!userOtp[0]){
+    if (!userOtp[0]) {
       const userotp = new UserOtp({
-        OTP : otp,
-        userId : user[0]._id,
-        createdAt:Date.now(),
-        expireAt : Date.now() + 600000
+        OTP: otp,
+        userId: user[0]._id,
+        createdAt: Date.now(),
+        expireAt: Date.now() + 600000
       })
       userotp.save()
       try {
@@ -85,13 +115,13 @@ export const verifyEmail = async (req, res, next) => {
           email: user[0].email,
           OTP: otp,
         }, { publicKey: process.env.PUBLIC_KEY, privateKey: process.env.PRIVATE_KEY });
-        return res.status(200).json({ message: 'Email sent successfully', otpId:userotp._id})
+        return res.status(200).json({ message: 'Email sent successfully', otpId: userotp._id })
       }
       catch (err) {
         return res.status(200).json(err)
       }
     }
-    else{
+    else {
       userOtp[0].createdAt = Date.now()
       userOtp[0].expireAt = Date.now() + 600000
       userOtp[0].OTP = otp
@@ -101,7 +131,7 @@ export const verifyEmail = async (req, res, next) => {
           email: user[0].email,
           OTP: otp,
         }, { publicKey: process.env.PUBLIC_KEY, privateKey: process.env.PRIVATE_KEY });
-        return res.status(200).json({ message: 'Email sent successfully', otpId:userOtp[0]._id})
+        return res.status(200).json({ message: 'Email sent successfully', otpId: userOtp[0]._id })
       }
       catch (err) {
         return res.status(200).json(err)
@@ -110,14 +140,15 @@ export const verifyEmail = async (req, res, next) => {
   }
 }
 
-export const verifyOtp = async (req,res,next) =>{
-  const {otpId,otp} = req.body
-  const userOtp = await UserOtp.findById(otpId) 
-  if(Date.now()>userOtp.expireAt){
+export const verifyOtp = async (req, res, next) => {
+  const { otpId, otp } = req.body
+  const userOtp = await UserOtp.findById(otpId)
+  console.log(userOtp, 'got it');
+  if (Date.now() > userOtp.expireAt) {
     userOtp.remove()
     return res.status(419).json('Timeout')
   }
-  if(otp === userOtp.OTP) return  
+  if (otp === userOtp.OTP) return res.status(200).json({ message: 'verified', userId: userOtp.userId })
   else return res.status(400).json('Invalid OTP')
 }
 

@@ -19,6 +19,13 @@ const UserSchema = new mongoose.Schema({
     },
     image:{
         type:String,
+    },
+    isDeactivated:{
+        type: Boolean,
+        default: false
+    },
+    deactivatedAt : {
+        type: Date
     }
 
 }, {timestamps:true})
