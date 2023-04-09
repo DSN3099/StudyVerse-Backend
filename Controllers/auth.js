@@ -88,7 +88,6 @@ export const register = async (req, res, next) => {
 }
 
 export const logout = (req, res, next) => {
-  console.log("requested logout")
   res.clearCookie('access_token')
   res.status(201).json({ message: 'Logout Successfull' })
   return
@@ -161,6 +160,27 @@ export const changePassword = async (req, res, next) => {
       $set: { password: newPass }
     }, { new: true })
     return res.status(200).json('Password updated successfully.')
+  } catch (err) {
+    res.status(400).json(err)
+  }
+}
+
+export const changeCurrentPassword = async (req, res, next) => {
+  const { id } = req.user
+  const { newPass, currentPass } = req.body
+  try {
+    const user = await Users.findById(id)
+    const isCorrectPass = await bcrypt.compare(currentPass, user.password)
+    if (isCorrectPass) {
+      const salt = bcrypt.genSaltSync(10)
+      const newPassHash = bcrypt.hashSync(newPass, salt)
+      user.password = newPassHash
+      user.save()
+      return res.status(200).json('Password updated successfully.')
+    }
+    else {
+      return res.status(400).json('Current password is incorrect.')
+    }
   } catch (err) {
     res.status(400).json(err)
   }

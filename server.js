@@ -9,7 +9,6 @@ import courseRoute from './Routes/course.js'
 import lessonRoute from './Routes/lesson.js'
 import userRoute from './Routes/user.js'
 import reviewRoute from './Routes/Reviews.js'
-
 const app = express();
 dotenv.config();
 
@@ -22,6 +21,7 @@ const connect = async () => {
         throw error;
     }
 }
+
 
 mongoose.connection.on('dissconnected', () => {
     console.log("MongoDB disconnected")
