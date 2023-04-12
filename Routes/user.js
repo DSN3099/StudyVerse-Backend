@@ -1,8 +1,11 @@
 import express from 'express'
-import { getUserData } from '../Controllers/user.js';
+import { getUserData,uploadImage,deactivateAccount, updateuserdata } from '../Controllers/user.js';
 import { verifytoken } from './VerifyToken.js'
 const router = express.Router()
 
 router.get('/',verifytoken,getUserData)
-
-export default router;
+router.patch('/uploadImage',verifytoken,uploadImage)
+router.delete('/deactivate',verifytoken,deactivateAccount)
+router.patch('/updateprofile',verifytoken,updateuserdata)
+ 
+export default router;  

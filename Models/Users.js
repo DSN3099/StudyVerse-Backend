@@ -13,9 +13,17 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    profession:{
+        type: String,
+        required: true
+    },
     password:{
         type: String,
         required : true,
+    },
+    bio:{
+        type:String,
+        required:true,
     },
     image:{
         type:String,
@@ -24,10 +32,13 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    deactivatedAt : {
-        type: Date
+    expireAt : {
+        type: Date,
+        default: null
     }
 
 }, {timestamps:true})
+
+UserSchema.index( { "expireAt": 1 }, { expireAfterSeconds: 0 } );
 
 export default mongoose.model("Users", UserSchema)
