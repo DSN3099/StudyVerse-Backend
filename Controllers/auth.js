@@ -5,6 +5,7 @@ import Users from '../Models/Users.js'
 import UserOtp from '../Models/UserOtp.js'
 import emailjs from '@emailjs/nodejs';
 import otpGenerator from 'otp-generator'
+import jwt_decode from 'jwt-decode'
 
 dotenv.config()
 
@@ -12,7 +13,9 @@ export const login = async (req, res, next) => {
   try {
     const user = await Users.findOne({ email: req.body.email })
     if (!user) return res.status(404).json('User not found')
-
+    if (user.isDeactivated) {
+      return res.status(400).json('You have deactivated your account, please recover your account.')
+    }
     const isCorrectPass = await bcrypt.compare(req.body.password, user.password)
     if (!isCorrectPass)
       return res.status(400).json('Incorrect password or email')
@@ -36,28 +39,47 @@ export const login = async (req, res, next) => {
   }
 }
 
+export const glogin = async (req, res, next) => {
+  const { token } = req.body;
+  try {
+    const { email } = jwt_decode(token)
+    const user = await Users.findOne({ email: email })
+    const newtoken = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: '1d' })
+    res
+      .cookie('access_token', newtoken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: "None"
+      })
+      .status(200)
+      .json({ newtoken, message: 'SignIn successfull.' })
+    return
+  } catch (err) {
+    return res.status(500).json(err)
+  }
+}
+
 export const recoverAccount = async (req, res, next) => {
   try {
     const user = await Users.findOne({ email: req.body.email })
+    console.log(user)
+    if(!user) return res.status(400).json('Account Recovery Time Up.')
     if (user.isDeactivated) {
-      if (user.deactivatedAt + 172800000 > Date.now) {
-        const isCorrectPass = await bcrypt.compare(req.body.password, user.password)
-        if (!isCorrectPass)
-          return res.status(400).json('Incorrect password or email')
-        const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: '1d' })
-        const { password, ...otherDetail } = user._doc
-        res
-          .cookie('access_token', token, {
-            secure: true,
-            httpOnly: true,
-            sameSite: "None"
-          })
-          .status(200)
-          .json({ ...otherDetail, token })
-      }
-      else {
-        return res.status(400).status('Time exceeded more than two days.')
-      }
+      const isCorrectPass = await bcrypt.compare(req.body.password, user.password)
+      if (!isCorrectPass)
+        return res.status(400).json('Incorrect password or email')
+      user.isDeactivated = false
+      user.expireAt = null
+      const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: '1d' })
+      const { password, ...otherDetail } = user._doc
+      res
+        .cookie('access_token', token, {
+          secure: true,
+          httpOnly: true,
+          sameSite: "None"
+        })
+        .status(200)
+        .json({ ...otherDetail, token })
     }
     else {
       return res.status(400).status('Your account is active, please login.')
