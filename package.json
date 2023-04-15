@@ -27,6 +27,7 @@
     "nodemon": "^2.0.20",
     "otp-generator": "^4.0.1",
     "passport": "^0.6.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "stripe": "^11.17.0"
   }
 }
