@@ -28,7 +28,8 @@ const courseSchema = new mongoose.Schema({
         type: String,
     },
     rating: {
-        type: Number,
+        type: Schema.Types.ObjectId,
+        ref:'Ratings'
     },
     upadted: Date,
     created: {
@@ -36,7 +37,7 @@ const courseSchema = new mongoose.Schema({
         default: Date.now
     },
     authorData: {
-        type: mongoose.Schema.ObjectId,
+        type: Schema.Types.ObjectId,
         ref:'Users'
     },
     published: {
