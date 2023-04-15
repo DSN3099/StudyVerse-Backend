@@ -1,6 +1,7 @@
 import Reviews from '../Models/Reviews.js'
 import Course from '../Models/Course.js'
 import Users from '../Models/Users.js'
+import Rating from '../Models/Rating.js'
 
 export const getAllReviews = async (req, res) => {
   try {
@@ -21,11 +22,27 @@ export const addReview = async (req, res) => {
       userData: { firstname, lastname, image },
       ...req.body,
     })
+    newReview.totalReviews = newReview.totalReviews + 1
+    const course = await Course.findById(id)
+    const rating = await Rating.findById(course.rating._id)
+    if(newReview.rating === 1){ 
+      rating.star1 = rating.star1 + 1
+    }else if(newReview.rating === 2){
+      rating.star2 = rating.star2 + 1
+    }else if(newReview.rating === 3){
+      rating.star3 = rating.star3 + 1
+    }else if(newReview.rating === 4){
+      rating.star4 = rating.star4 + 1
+    }else {
+      rating.star5 = rating.star5 + 1
+    }
     await newReview.save()
-    const course = await Course.findByIdAndUpdate(id, { $push: { reviews: newReview._id } }, { new: true, upsert: true })
+    await rating.save()
+    course.reviews.push(newReview._id)
+    await course.save()
     res.status(200).json(newReview)
   } catch (err) {
-    res.status(500).json({ message: err })
+    res.status(500).json(err)
   }
 }
 

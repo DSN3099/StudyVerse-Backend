@@ -14,13 +14,29 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    password: {
-      type: String,
-      required: true,
+    profession:{
+        type: String,
+        required: true
     },
-    image: {
-      type: String,
+    password:{
+        type: String,
+        required : true,
     },
+    bio:{
+        type:String,
+        required:true,
+    },
+    image:{
+        type:String,
+    },
+    isDeactivated:{
+        type: Boolean,
+        default: false
+    },
+    expireAt : {
+        type: Date,
+        default: null
+    }
 
     myWishlist: [
       {
@@ -38,4 +54,6 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Users", UserSchema);
+UserSchema.index( { "expireAt": 1 }, { expireAfterSeconds: 0 } );
+
+export default mongoose.model("Users", UserSchema)
