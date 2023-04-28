@@ -44,7 +44,10 @@ export const glogin = async (req, res, next) => {
   try {
     const { email } = jwt_decode(token)
     const user = await Users.findOne({ email: email })
-    const newtoken = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: '1d' })
+    if(!user){
+      return res.status(401).json('User not found...')
+    }
+    const newtoken = jwt.sign({ id: user?._id }, process.env.JWT, { expiresIn: '1d' })
     res
       .cookie('access_token', newtoken, {
         secure: true,
