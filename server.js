@@ -9,12 +9,9 @@ import courseRoute from './Routes/course.js'
 import lessonRoute from './Routes/lesson.js'
 import userRoute from './Routes/user.js'
 import reviewRoute from './Routes/Reviews.js'
-<<<<<<< HEAD
 import teacherRoute from './Routes/teacher.js'
-=======
 import paymentRoute from './Routes/Payment.js'
 
->>>>>>> 583569f92911d0c2b248cd90406c028ae78b2296
 const app = express();
 dotenv.config();
 
