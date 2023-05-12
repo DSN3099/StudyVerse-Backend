@@ -9,7 +9,12 @@ import courseRoute from './Routes/course.js'
 import lessonRoute from './Routes/lesson.js'
 import userRoute from './Routes/user.js'
 import reviewRoute from './Routes/Reviews.js'
+<<<<<<< HEAD
 import teacherRoute from './Routes/teacher.js'
+=======
+import paymentRoute from './Routes/Payment.js'
+
+>>>>>>> 583569f92911d0c2b248cd90406c028ae78b2296
 const app = express();
 dotenv.config();
 
@@ -55,6 +60,7 @@ app.use('/api/video', lessonRoute)
 app.use('/api/user', userRoute)
 app.use('/api/review', reviewRoute)
 app.use('/api/teacher',teacherRoute)
+app.use('/api/payment',paymentRoute)
 
 
 app.listen(5000, () => {

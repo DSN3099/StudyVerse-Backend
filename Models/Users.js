@@ -19,8 +19,10 @@ const UserSchema = new mongoose.Schema({
     },
     bio:{
         type:String,
-        required:true,
     },
+    cart:[
+        {type:mongoose.Schema.Types.ObjectId,ref:"Course"}
+    ],
     image:{
         type:String,
     },
