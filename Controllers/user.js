@@ -41,3 +41,50 @@ export const updateuserdata = async(req,res,next) =>{
         return res.status(500).json(err)
     }
 }
+
+export const addToCart = async(req,res,next) =>{
+    try{
+        const user = await Users.findById(req.user.id)
+        user.cart.push(req.body.courseId)
+        user.save()
+        return res.status(200).json('Course added to the cart...')
+    }catch(err){
+        return res.status(400).json(err)
+    }
+}
+
+export const getCart = async(req,res,next) =>{
+    try{
+        const user = await Users.findById(req.user.id).populate({
+            path:'cart',
+            populate:{ path : 'authorData', select:'firstname lastname'},
+            select:'authorData title image price'
+        })
+        console.log(user)
+        return res.status(200).json(user.cart)
+    }catch(err){
+        return res.status(400).json(err)
+    }
+}
+
+export const deleteCart = async(req,res,next) =>{
+    try{
+        const user = await Users.findById(req.user.id)
+        user.cart.pull(req.params.id)
+        user.save()
+        return res.status(200).json('Course added to the cart...')
+    }catch(err){
+        return res.status(400).json(err)
+    }
+}
+
+export const emptyCart = async(req,res,next) =>{
+    try{
+        const user = await Users.findById(req.user.id)
+        user.cart = []
+        user.save()
+        return res.status(200).json(user.cart)
+    }catch(err){
+        return res.status(400).json(err)
+    }
+}

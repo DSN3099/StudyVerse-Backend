@@ -15,7 +15,6 @@ const UserSchema = new mongoose.Schema({
     },
     profession:{
         type: String,
-        required: true
     },
     password:{
         type: String,
@@ -23,8 +22,10 @@ const UserSchema = new mongoose.Schema({
     },
     bio:{
         type:String,
-        required:true,
     },
+    cart:[
+        {type:mongoose.Schema.Types.ObjectId,ref:"Course"}
+    ],
     image:{
         type:String,
     },
