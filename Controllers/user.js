@@ -1,8 +1,13 @@
 import Users from '../Models/Users.js'
 
 export const getUserData = async(req,res,next) =>{
-    const user = await Users.findById(req.user.id)
-    return res.status(200).json(user)
+    try{
+        const user = await Users.findById(req.user.id)
+        return res.status(200).json(user)
+
+    }catch(err){
+        return res.status(500).json(err)
+    }
 }
 
 export const uploadImage = async(req,res,next) =>{
@@ -31,9 +36,8 @@ export const deactivateAccount = async(req,res,next) =>{
 
 export const updateuserdata = async(req,res,next) =>{
     try{
-        const {profession,bio} = req.body;
+        const {bio} = req.body;
         const user = await Users.findById(req.user.id)
-        user.profession = profession
         user.bio = bio
         await user.save()
         return res.status(200).json('Profile updated successfully.')

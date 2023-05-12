@@ -9,6 +9,7 @@ import courseRoute from './Routes/course.js'
 import lessonRoute from './Routes/lesson.js'
 import userRoute from './Routes/user.js'
 import reviewRoute from './Routes/Reviews.js'
+import teacherRoute from './Routes/teacher.js'
 const app = express();
 dotenv.config();
 
@@ -53,6 +54,7 @@ app.use('/api/course', courseRoute)
 app.use('/api/video', lessonRoute)
 app.use('/api/user', userRoute)
 app.use('/api/review', reviewRoute)
+app.use('/api/teacher',teacherRoute)
 
 
 app.listen(5000, () => {
