@@ -6,3 +6,4 @@ const router = express.Router();
 router.post('/createteacher',verifytoken,createteacher)
 // router.get('/teacherdata',verifytoken,getTeacherData)
 export default router;
+
