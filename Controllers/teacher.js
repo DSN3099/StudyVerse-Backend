@@ -25,5 +25,6 @@ export const getTeacherData = async(req,res,next) =>{
         return res.status(200).json(teacher)
     }catch(err){
         return res.status(500).json(err);
-    }
+    }
 }
+
