@@ -1,6 +1,6 @@
 import express from 'express';
 import {verifytoken} from './VerifyToken.js';
-import { createteacher,getTeacherData, updateTeacher } from '../Controllers/teacher.js';
+import { createteacher,getTeacherData, updateTeacher } from '../Controllers/teacher.js'
 const router = express.Router();
 
 router.post('/createteacher',verifytoken,createteacher)
