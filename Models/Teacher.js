@@ -3,17 +3,16 @@ import mongoose from 'mongoose';
 const TeacherSchema = new mongoose.Schema({
     profession:{
         type: String,
-        required: true
     },
     video:{
         type:String
     },
     bio:{
         type:String,
-        required: true
-    }, 
-    userdata:{
-        type:mongoose.Schema.Types.ObjectId,ref:"Users"
+    },
+    verified:{
+        type: Boolean,
+        default:false
     }
 })
 

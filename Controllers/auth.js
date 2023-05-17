@@ -6,6 +6,7 @@ import UserOtp from '../Models/UserOtp.js'
 import emailjs from '@emailjs/nodejs';
 import otpGenerator from 'otp-generator'
 import jwt_decode from 'jwt-decode'
+import Teacher from '../Models/Teacher.js'
 
 dotenv.config()
 
@@ -103,6 +104,13 @@ export const register = async (req, res, next) => {
       email: req.body.email,
       password: hash,
     })
+    const newTeacher = new Teacher({
+      profession:'',
+      bio:'',
+      video:''
+    })
+    await newTeacher.save()
+    newUser.teacherData = newTeacher._id
     await newUser.save()
     res.status(200).send('User created successfully')
     return
@@ -181,7 +189,7 @@ export const changePassword = async (req, res, next) => {
   const salt = bcrypt.genSaltSync(10)
   const newPass = bcrypt.hashSync(req.body.password, salt)
   try {
-    await Users.findByIdAndUpdate(id, {
+    await Users.findByIdAndUpdate(id, { 
       $set: { password: newPass }
     }, { new: true })
     return res.status(200).json('Password updated successfully.')

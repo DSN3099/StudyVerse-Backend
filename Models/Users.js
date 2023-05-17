@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const UserSchema = new mongoose.Schema({
     firstname:{
@@ -33,6 +33,14 @@ const UserSchema = new mongoose.Schema({
     expireAt : {
         type: Date,
         default: null
+    },
+    isTeacher:{
+        type: Boolean,
+        default: false
+    },
+    teacherData:{
+        type: Schema.Types.ObjectId,
+        ref:'Teacher'
     }
 
 }, {timestamps:true})

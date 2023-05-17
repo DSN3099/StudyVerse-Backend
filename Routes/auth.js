@@ -1,6 +1,7 @@
 import express from 'express'
+import { verifytoken } from './VerifyToken.js';
 const router = express.Router();
-import { login,glogin, register, logout, verifyEmail, changePassword, verifyOtp, recoverAccount } from '../Controllers/auth.js'
+import { login,glogin, register, logout, verifyEmail, changePassword, verifyOtp, recoverAccount, changeCurrentPassword } from '../Controllers/auth.js'
 
 router.post('/login',login)
 router.post('/glogin',glogin)
@@ -9,6 +10,7 @@ router.post('/register',register)
 router.post('/verifyEmail',verifyEmail)
 router.post('/verifyOtp',verifyOtp)
 router.patch('/changepassword/:id',changePassword)
-router.post('/recover',recoverAccount)
+router.patch('/changepassword',verifytoken,changeCurrentPassword)
+router.post('/recover',verifytoken,recoverAccount)
 
 export default router;

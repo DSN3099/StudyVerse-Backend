@@ -2,7 +2,8 @@ import Users from '../Models/Users.js'
 
 export const getUserData = async(req,res,next) =>{
     try{
-        const user = await Users.findById(req.user.id)
+        const user = await Users.findById(req.user.id).populate('teacherData').select('firstname lastname email bio image isTeacher teacherData')   
+        console.log(user)
         return res.status(200).json(user)
 
     }catch(err){
