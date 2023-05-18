@@ -3,7 +3,6 @@ import Users from '../Models/Users.js';
 
 export const createteacher = async(req,res,next)=>{
     try{
-        console.log(req.body)
         const user = await Users.findById(req.user.id);
         user.isTeacher = true;
         const teacher = await Teacher.findById(user.teacherData._id)
@@ -33,10 +32,23 @@ export const updateTeacher = async(req,res,next)=>{
 }
 
 export const getTeacherData = async(req,res,next) =>{
+    const {id} = req.params
     try{
-        const user = await Users.findById(req.user.id).populate('teacherData')
-        console.log(user)
-        return res.status(200).json(user.teacherData)
+        const user = await Users.findById(id).populate({
+            path:'teacherData',
+            populate:{ path : 'courses'}
+        })
+        return res.status(200).json(user)
+    }catch(err){
+        return res.status(500).json(err);
+    }
+}
+
+export const getTeachersCourse = async(req,res,next) =>{
+    try{
+        const {teacherData} = await Users.findById(req.user.id)
+        const {courses} = await Teacher.findById(teacherData).populate('courses')
+        return res.status(200).json(courses)
     }catch(err){
         return res.status(500).json(err);
     }

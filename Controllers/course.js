@@ -1,5 +1,7 @@
 import Course from '../Models/Course.js'
 import Rating from '../Models/Rating.js'
+import Teacher from '../Models/Teacher.js'
+import Users from '../Models/Users.js'
 
 export const getAllCourse = async (req, res) => {
   try {
@@ -14,7 +16,7 @@ export const getAllCourse = async (req, res) => {
 
 export const getCourse = async (req, res) => {
   try {
-    const getCourse = await Course.findById(req.params.id).populate('reviews').populate('rating').populate('authorData')
+    const getCourse = await Course.findById(req.params.id).populate('reviews').populate('rating').populate('authorData','firstname lastname image')
     if (!getCourse) res.status(404).send('Course not found...')
     res.status(200).json(getCourse)
     return 
@@ -37,6 +39,11 @@ export const addCourse = async (req, res) => {
     star4:0,
     star5:0,
   })
+
+  const {teacherData} = await Users.findById(req.user.id)
+  const teacher = await Teacher.findById(teacherData)
+  teacher.courses.push(newCourse._id)
+  await teacher.save()
   await newRating.save()
   newCourse.rating = newRating._id
   try {

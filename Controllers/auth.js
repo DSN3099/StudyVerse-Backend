@@ -66,7 +66,6 @@ export const glogin = async (req, res, next) => {
 export const recoverAccount = async (req, res, next) => {
   try {
     const user = await Users.findOne({ email: req.body.email })
-    console.log(user)
     if(!user) return res.status(400).json('Account Recovery Time Up.')
     if (user.isDeactivated) {
       const isCorrectPass = await bcrypt.compare(req.body.password, user.password)
@@ -133,7 +132,6 @@ export const verifyEmail = async (req, res, next) => {
   else {
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
     const userOtp = await UserOtp.find({ userId: user[0]._id })
-    console.log(userOtp)
     if (!userOtp[0]) {
       const userotp = new UserOtp({
         OTP: otp,
@@ -175,7 +173,6 @@ export const verifyEmail = async (req, res, next) => {
 export const verifyOtp = async (req, res, next) => {
   const { otpId, otp } = req.body
   const userOtp = await UserOtp.findById(otpId)
-  console.log(userOtp, 'got it');
   if (Date.now() > userOtp.expireAt) {
     userOtp.remove()
     return res.status(419).json('Timeout')
