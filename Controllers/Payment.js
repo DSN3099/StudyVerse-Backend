@@ -7,7 +7,6 @@ const calculateOrderAmount = (items) => {
     items.map((val)=>{
         total = total + val.price
     })
-    console.log(total)
     return total;
 };
 

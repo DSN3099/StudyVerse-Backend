@@ -2,8 +2,7 @@ import Users from '../Models/Users.js'
 
 export const getUserData = async(req,res,next) =>{
     try{
-        const user = await Users.findById(req.user.id).populate('teacherData').select('firstname lastname email bio image isTeacher teacherData')   
-        console.log(user)
+        const user = await Users.findById(req.user.id).populate('teacherData').select('firstname lastname email bio image isTeacher teacherData cart')
         return res.status(200).json(user)
 
     }catch(err){
@@ -25,7 +24,6 @@ export const uploadImage = async(req,res,next) =>{
 export const deactivateAccount = async(req,res,next) =>{
     try{
         const user = await Users.findById(req.user.id)
-        console.log(user);
         user.isDeactivated = true
         user.expireAt = Date.now() + 172800000
         await user.save()
@@ -65,7 +63,6 @@ export const getCart = async(req,res,next) =>{
             populate:{ path : 'authorData', select:'firstname lastname'},
             select:'authorData title image price'
         })
-        console.log(user)
         return res.status(200).json(user.cart)
     }catch(err){
         return res.status(400).json(err)

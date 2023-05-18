@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const TeacherSchema = new mongoose.Schema({
     profession:{
@@ -13,7 +13,10 @@ const TeacherSchema = new mongoose.Schema({
     verified:{
         type: Boolean,
         default:false
-    }
+    },
+    courses:[
+        {type:Schema.Types.ObjectId, ref:'Course'}
+    ]
 })
 
 export default mongoose.model("Teacher",TeacherSchema)
